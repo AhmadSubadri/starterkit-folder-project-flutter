@@ -1,18 +1,9 @@
 import 'package:flutter/material.dart';
-// import 'core/routes.dart';
-import 'package:provider/provider.dart';
-import 'core/providers/counter_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'presentation/screens/home_screen.dart';
 
 void main() {
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (context) => CounterProvider()),
-      ],
-      child: MyApp(),
-    ),
-  );
+  runApp(ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
