@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:myapp/core/theme/theme2_provider.dart';
+// import 'package:myapp/core/theme/theme2_provider.dart';
 import '../../core/providers/counter_provider.dart';
 import '../../core/providers/user_riverpod.dart';
 
@@ -12,7 +14,16 @@ class HomeScreen extends ConsumerWidget {
     final userAsyncValue = ref.watch(userProvider);
 
     return Scaffold(
-      appBar: AppBar(title: Text('Riverpod Example')),
+      appBar: AppBar(
+        title: Text('Riverpod Example'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.brightness_6),
+            onPressed:
+                () => ref.read(themeNotifierProvider.notifier).toggleTheme(),
+          ),
+        ],
+      ),
       body: Column(
         children: [
           // Counter Section
