@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:myapp/core/providers/auth_provider.dart';
 import 'package:myapp/core/theme/theme2_provider.dart';
-// import 'package:myapp/core/theme/theme2_provider.dart';
+import 'package:myapp/core/utils/snackbar_provider.dart';
 import '../../core/providers/counter_provider.dart';
 import '../../core/providers/user_riverpod.dart';
 
@@ -12,6 +13,15 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final counter = ref.watch(counterProvider);
     final userAsyncValue = ref.watch(userProvider);
+    final snackbarMessage = ref.watch(snackbarProvider);
+    if (snackbarMessage != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(snackbarMessage)));
+        ref.read(snackbarProvider.notifier).state = null;
+      });
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -21,6 +31,10 @@ class HomeScreen extends ConsumerWidget {
             icon: Icon(Icons.brightness_6),
             onPressed:
                 () => ref.read(themeNotifierProvider.notifier).toggleTheme(),
+          ),
+          ElevatedButton(
+            onPressed: () => ref.read(authProvider.notifier).logout(),
+            child: Text("Logout"),
           ),
         ],
       ),
