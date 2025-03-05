@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:myapp/core/providers/auth_provider.dart';
+import 'package:myapp/core/utils/animations.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -11,11 +12,21 @@ class LoginScreen extends ConsumerStatefulWidget {
   _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends ConsumerState<LoginScreen> {
+class _LoginScreenState extends ConsumerState<LoginScreen>
+    with SingleTickerProviderStateMixin {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
+  final _animationKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      AppAnimation.bounceAnimation(_animationKey);
+    });
+  }
 
   Future<void> _login() async {
     if (!_formKey.currentState!.validate()) return;
@@ -50,10 +61,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final bottomPadding = MediaQuery.of(context).viewInsets.bottom;
+
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
-          // Background gradient
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -63,7 +76,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               ),
             ),
           ),
-          // Header dengan bentuk bubble
+          // Header
           Positioned(
             top: 0,
             left: 0,
@@ -76,32 +89,40 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [Colors.blueAccent, Colors.purpleAccent],
+                    colors: [
+                      Color.fromRGBO(68, 138, 255, 1),
+                      Color.fromRGBO(68, 138, 255, 1),
+                    ],
                   ),
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Gambar ilustrasi
-                    Image.asset(
-                      'assets/images/login_illustration.png', // Ganti dengan path gambar Anda
-                      height: 120,
-                    ),
-                    const SizedBox(height: 10),
-                    // Teks "Silakan Sign In"
-                    const Text(
-                      "Silakan Sign In",
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                    ClipPath(
+                      clipper: WaterDropClipper(),
+                      child: Image.asset(
+                        'assets/images/icon.png',
+                        height: 120,
+                        width: 120,
+                        fit: BoxFit.cover,
                       ),
                     ),
-                    const SizedBox(height: 5),
-                    // Teks "Akses"
-                    const Text(
-                      "Akses",
-                      style: TextStyle(fontSize: 18, color: Colors.white70),
+                    SizedBox(height: 10),
+                    Text(
+                      'Welcome Back!',
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w800,
+                        color: Color.fromARGB(255, 255, 255, 255),
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                    Text(
+                      'Login to continue your journey',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: const Color.fromARGB(255, 255, 255, 255),
+                      ),
                     ),
                   ],
                 ),
@@ -113,13 +134,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             top: 200,
             left: 0,
             right: 0,
-            bottom: 0,
+            bottom: bottomPadding > 0 ? bottomPadding + 20 : 0,
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(20.0),
               child: Column(
                 children: [
-                  const SizedBox(height: 60), // Spasi untuk header
+                  const SizedBox(height: 60),
                   AnimatedContainer(
+                    key: _animationKey,
                     duration: const Duration(milliseconds: 500),
                     curve: Curves.easeInOut,
                     padding: const EdgeInsets.all(24.0),
@@ -160,7 +182,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             validator:
                                 (value) =>
                                     value!.isEmpty
-                                        ? "Username wajib diisi"
+                                        ? "Username is required"
                                         : null,
                           ),
                           const SizedBox(height: 16),
@@ -183,7 +205,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             validator:
                                 (value) =>
                                     value!.isEmpty
-                                        ? "Password wajib diisi"
+                                        ? "Password is required"
                                         : null,
                           ),
                           const SizedBox(height: 24),
@@ -192,13 +214,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               : ElevatedButton(
                                 onPressed: _login,
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.blueAccent,
+                                  backgroundColor: const Color.fromRGBO(
+                                    68,
+                                    138,
+                                    255,
+                                    1,
+                                  ),
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 40,
-                                    vertical: 16,
+                                    vertical: 10,
                                   ),
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12.0),
+                                    borderRadius: BorderRadius.circular(100),
                                   ),
                                   elevation: 5,
                                   // ignore: deprecated_member_use
@@ -207,24 +234,80 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                   ),
                                 ),
                                 child: const Text(
-                                  "Login",
+                                  "SIGN IN",
                                   style: TextStyle(
                                     fontSize: 18,
                                     color: Colors.white,
                                   ),
                                 ),
                               ),
-                          const SizedBox(height: 16),
-                          const Text(
-                            "Jangan berikan username dan password Anda kepada orang lain.",
-                            style: TextStyle(color: Colors.grey, fontSize: 12),
-                            textAlign: TextAlign.center,
-                          ),
                         ],
                       ),
                     ),
                   ),
                 ],
+              ),
+            ),
+          ),
+          // Footer login
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: ClipPath(
+              clipper: FooterClipper(),
+              child: Container(
+                height: 200,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Color.fromRGBO(68, 138, 255, 1),
+                      Color.fromRGBO(68, 138, 255, 1),
+                    ],
+                  ),
+                ),
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Container(
+                      padding: EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 213, 172, 7),
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black26,
+                            blurRadius: 4,
+                            offset: Offset(2, 2),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.warning_amber_rounded,
+                            color: Colors.red,
+                            size: 28,
+                          ),
+                          SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              "Jangan berikan username dan password Anda kepada orang lain.",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize:
+                                    MediaQuery.of(context).size.width * 0.04,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              textAlign: TextAlign.left,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
@@ -234,7 +317,26 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 }
 
-// Custom Clipper untuk bentuk bubble
+class FooterClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    final path = Path();
+    path.lineTo(0, 0);
+
+    path.quadraticBezierTo(size.width / 2, size.height * 0.5, size.width, 0);
+
+    path.lineTo(size.width, size.height);
+    path.lineTo(0, size.height);
+
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
+}
+
+// Custom Clipper header
 class BubbleClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
@@ -259,4 +361,24 @@ class BubbleClipper extends CustomClipper<Path> {
 
   @override
   bool shouldReclip(CustomClipper<Path> oldClipper) => false;
+}
+
+class WaterDropClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    final path = Path();
+    path.addOval(Rect.fromLTWH(0, 0, size.width, size.height));
+
+    path.moveTo(size.width * 0.75, size.height);
+    path.quadraticBezierTo(
+      size.width,
+      size.height,
+      size.width * 0.85,
+      size.height * 1.2,
+    );
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => true;
 }
