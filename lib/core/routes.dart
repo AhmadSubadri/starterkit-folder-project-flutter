@@ -1,10 +1,9 @@
-// routes.dart
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:myapp/core/providers/auth_provider.dart' as auth;
 import 'package:myapp/presentation/screens/auth/login_screen.dart';
-import 'package:myapp/presentation/screens/home_screen.dart';
 import 'package:myapp/presentation/screens/component/onboarding.dart';
+import 'package:myapp/presentation/widgets/bottom_navigation.dart'; // Import BottomNavScreen
 
 final routerProvider = Provider<GoRouter>((ref) {
   final isLoggedIn = ref.watch(auth.authProvider);
@@ -16,7 +15,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             ? '/onboarding'
             : (isLoggedIn ? '/' : '/login'),
     routes: [
-      GoRoute(path: '/', builder: (context, state) => HomeScreen()),
+      GoRoute(path: '/', builder: (context, state) => BottomNavScreen()),
       GoRoute(
         path: '/onboarding',
         builder:
@@ -43,7 +42,6 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/login', builder: (context, state) => LoginScreen()),
     ],
     redirect: (context, state) {
-      // Kondisi redirect sudah cukup baik, tidak perlu diubah
       if (!isLoggedIn &&
           !hasSeenOnboarding &&
           state.matchedLocation != '/onboarding') {

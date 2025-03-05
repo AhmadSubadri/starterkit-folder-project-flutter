@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:myapp/core/providers/auth_provider.dart';
-import 'package:myapp/core/theme/theme2_provider.dart';
 import 'package:myapp/core/utils/snackbar_provider.dart';
 import '../../core/providers/counter_provider.dart';
 import '../../core/providers/user_riverpod.dart';
 
+// https://dribbble.com/shots/7786063-Flato-Real-estate-mobile-app-statistics-and-filters
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
@@ -24,23 +23,54 @@ class HomeScreen extends ConsumerWidget {
     }
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Riverpod Example'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.brightness_6),
-            onPressed:
-                () => ref.read(themeNotifierProvider.notifier).toggleTheme(),
+        title: Text(
+          'Welcome back!',
+          style: TextStyle(
+            color: Color.fromRGBO(0, 44, 119, 1),
+            fontWeight: FontWeight.bold,
           ),
-          ElevatedButton(
-            onPressed: () => ref.read(authProvider.notifier).logout(),
-            child: Text("Logout"),
-          ),
-        ],
+        ),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        surfaceTintColor: Colors.white,
+        iconTheme: IconThemeData(color: Colors.black),
       ),
       body: Column(
         children: [
-          // Counter Section
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              SizedBox(width: 20),
+              CircleAvatar(
+                radius: 25,
+                backgroundImage: AssetImage('assets/images/hello.png'),
+              ),
+              SizedBox(width: 15),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Ahmad Subadri S.Kom',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromRGBO(0, 44, 119, 1),
+                      ),
+                      softWrap: true,
+                    ),
+                    Text(
+                      'Programmer',
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+
           Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
